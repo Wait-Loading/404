@@ -1,5 +1,9 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import org.junit.jupiter.api.Test;
 
 class test {
@@ -53,6 +57,10 @@ class test {
 		 result = w.getUnsigned();
 		 num = 0;//The max value after we set all value as true
 		assertEquals(num,result);
+		
+		
+		
+		
 	}
 	/**
 	 * This test checks the get signed value method and also set(int value) method
@@ -71,7 +79,7 @@ class test {
 		
 		w.setBit(0, new Bit(false));//Changing the sign by changing the lest significant value
 		result = w.getSigned();
-		num = 1;
+		num = 2147483647;
 		assertEquals(num,result);
 		
 		for (int i=0;i<32;i++)
@@ -207,6 +215,162 @@ class test {
         
 	}
 	@Test
+	void Test_or()
+	{
+		Word a = new Word();
+        a.set(4);
+        Word b= new Word ();
+        b.set(-4);
+        ALU ad= new ALU(a,b);
+        Bit or[]= new Bit[] {new Bit(true),new Bit(false),new Bit(false),new Bit(true)};
+        ad.doOperation(or);
+        assertEquals(ad.Result.getSigned(),-4);//The last significant bit will be 1 as its or
+        
+       
+        a.set(1);
+        b.set(0);
+         ad= new ALU(a,b);
+        ad.doOperation(or);
+        assertEquals(ad.Result.getSigned(),1);//1 or 0 is 1
+        
+        
+        a.set(0);
+        b.set(0);
+         ad= new ALU(a,b);
+        ad.doOperation(or);
+        assertEquals(ad.Result.getSigned(),0);//0 or 0 is 0
+        a.set(1);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(or);
+        assertEquals(ad.Result.getSigned(),1);//1 or 1 is 1
+        a.set(0);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(or);
+        assertEquals(ad.Result.getSigned(),1);//0 or 1 is 1
+	}
+	@Test
+	void Test_and()
+	{
+		Word a = new Word();
+        a.set(4);
+        Word b= new Word ();
+        b.set(-4);
+        ALU ad= new ALU(a,b);
+        Bit and[]= new Bit[] {new Bit(true),new Bit(false),new Bit(false),new Bit(false)};
+        ad.doOperation(and);
+        assertEquals(ad.Result.getSigned(),4);//The last significant bit will be 0 as its "and"
+        
+       
+        a.set(1);
+        b.set(0);
+         ad= new ALU(a,b);
+        ad.doOperation(and);
+        assertEquals(ad.Result.getSigned(),0);//1 and 0 is 0
+        
+        
+        a.set(0);
+        b.set(0);
+         ad= new ALU(a,b);
+        ad.doOperation(and);
+        assertEquals(ad.Result.getSigned(),0);//0 and 0 is 0
+        a.set(1);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(and);
+        assertEquals(ad.Result.getSigned(),1);//1 and 1 is 1
+        a.set(0);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(and);
+        assertEquals(ad.Result.getSigned(),0);//0 and 1 is 0
+	}
+	@Test
+	void TestXor()
+	{
+		Word a = new Word();
+        a.set(4);
+        Word b= new Word ();
+        b.set(-4);
+        ALU ad= new ALU(a,b);
+        Bit Xor[]= new Bit[] {new Bit(true),new Bit(false),new Bit(true),new Bit(false)};
+        ad.doOperation(Xor);
+        assertEquals(ad.Result.getSigned(),-8);//The last significant bit will be 0 as its "and"
+        
+       
+        a.set(1);
+        b.set(0);
+        ad= new ALU(a,b);
+        ad.doOperation(Xor);
+        assertEquals(ad.Result.getSigned(),1);//1 Xor 0 is 1
+        
+        
+        a.set(0);
+        b.set(0);
+         ad= new ALU(a,b);
+        ad.doOperation(Xor);
+        assertEquals(ad.Result.getSigned(),0);//0 Xor 0 is 0
+        a.set(1);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(Xor);
+        assertEquals(ad.Result.getSigned(),0);//1 Xor 1 is 0
+        a.set(0);
+        b.set(1);
+         ad= new ALU(a,b);
+        ad.doOperation(Xor);
+        assertEquals(ad.Result.getSigned(),1);//0 Xor 1 is 1
+	}
+	@Test
+	void test_not()
+	{
+
+		Word a = new Word();
+        a.set(4);//f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,t,f,f
+        Word b= new Word ();
+        b.set(-4);
+        ALU ad= new ALU(a,b);
+        Bit not[]= new Bit[] {new Bit(true),new Bit(false),new Bit(true),new Bit(true)};
+        ad.doOperation(not);
+        assertEquals(ad.Result.toString(),"t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,f,t,t");//The last significant bit will be 0 as its "and"
+	}
+	@Test 
+	void test_left()
+	{
+		Word a = new Word();
+        a.set(4);
+        Word b= new Word ();
+        b.set(1);
+        ALU ad= new ALU(a,b);
+        Bit left[]= new Bit[] {new Bit(true),new Bit(true),new Bit(false),new Bit(false)};
+        ad.doOperation(left);
+        assertEquals(ad.Result.getSigned(),8);//The left shift by 1 of the 4 is 8
+        a.set(4);
+        b.set(2);
+         ad= new ALU(a,b);
+        ad.doOperation(left);
+        assertEquals(ad.Result.getSigned(),16);//The left shift by 2 of the 4 is 16
+	}	
+	@Test 
+	void test_right()
+	{
+		Word a = new Word();
+        a.set(4);
+        Word b= new Word ();
+        b.set(1);
+        ALU ad= new ALU(a,b);
+        Bit right[]= new Bit[] {new Bit(true),new Bit(true),new Bit(false),new Bit(true)};
+        ad.doOperation(right);
+        assertEquals(ad.Result.getSigned(),2);//The right shift by 1 of the 4 is 2
+        a.set(4);
+        b.set(2);
+         ad= new ALU(a,b);
+        ad.doOperation(right);
+        assertEquals(ad.Result.getSigned(),1);//The right shift by 2 of the 4 is 1
+	}
+	
+	@Test
 	void Testadd()
 	{
 		Word a = new Word();
@@ -216,19 +380,16 @@ class test {
        ALU ad= new ALU(a,b);
        Bit add[]= new Bit[] {new Bit(true),new Bit(true),new Bit(true),new Bit(false)};
        ad.doOperation(add);
-       System.out.println(ad.Result.getSigned());
-       Bit sub[]= new Bit[] {new Bit(true),new Bit(true),new Bit(true),new Bit(true)};
-       ad.doOperation(sub);
-       System.out.println(ad.Result.getSigned());
-       Bit multiply[]= new Bit[] {new Bit(false),new Bit(true),new Bit(true),new Bit(true)};
-       ad.doOperation(multiply);
-       System.out.println(ad.Result.getSigned());
-       Bit bit1= new Bit(true);
-       Bit bit2= new Bit(true);
+       assertEquals(ad.Result.getSigned(),2+3);//This is add2
+       
+       a.set(4);
+       b.set(-6);
+        ad= new ALU(a,b);
+       ad.doOperation(add);
+       assertEquals(ad.Result.getSigned(),4+(-6));
 
-       Bit bit3= new Bit(true);
-
-       Bit bit4= new Bit(true);
+       //The tests for add4
+       
        Word one = new Word();
        one.set(10);
        Word two= new Word ();
@@ -237,11 +398,161 @@ class test {
        three.set(1);
        Word four= new Word ();
        four.set(1);
-       
        Word sum=ad.add4(one, two, three, four);
-        System.out.println(sum.getSigned());
-      
+        assertEquals(sum.getSigned(),10+15+1+1);
+        
+        
+        
+        one.set(1);
+        two.set(1);
+        three.set(-1);
+        four.set(1);
+         sum=ad.add4(one, two, three, four);
+         assertEquals(sum.getSigned(),1+1-1+1);
+         
+         one.set(0);
+         two.set(1);
+         three.set(1);
+         four.set(1);
+          sum=ad.add4(one, two, three, four);
+          assertEquals(sum.getSigned(),0+1+1+1);
+	}
+	
+	@Test
+	void Testsub()
+	{
+		Word a = new Word();
+        a.set(2);
+        Word b= new Word ();
+        b.set(3);
+        ALU ad= new ALU(a,b);
+        Bit sub[]= new Bit[] {new Bit(true),new Bit(true),new Bit(true),new Bit(true)};
+        ad.doOperation(sub);
+        assertEquals(ad.Result.getSigned(),2-3);
+        a.set(23);
+        b.set(13);
+        ad= new ALU(a,b);
+        ad.doOperation(sub);
+        assertEquals(ad.Result.getSigned(),23-13);
+        a.set(2323);
+        b.set(13);
+        ad= new ALU(a,b);
+        ad.doOperation(sub);
+        assertEquals(ad.Result.getSigned(),2323-13);
+        a.set(3);
+        b.set(-2);
+        ad= new ALU(a,b);
+        ad.doOperation(sub);
+        assertEquals(ad.Result.getSigned(),5);
+	}
+	@Test
+	void multiply()
+	{
+		Word a = new Word();
+        a.set(2);
+        Word b= new Word ();
+        b.set(3);
+        ALU ad= new ALU(a,b);
+        Bit multiply[]= new Bit[] {new Bit(false),new Bit(true),new Bit(true),new Bit(true)};
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),3*2);
+        
+        a.set(3);
+        b.set(-2);
+        ad= new ALU(a,b);
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),3*-2);
+        
+        a.set(234);
+        b.set(-2);
+        ad= new ALU(a,b);
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),234*-2);
+        
+        a.set(34);
+        b.set(63);
+        ad= new ALU(a,b);
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),34*63);
+        
+        a.set(0);
+        b.set(3223);
+        ad= new ALU(a,b);
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),0);
+        
+        a.set(1);
+        b.set(1);
+        ad= new ALU(a,b);
+        ad.doOperation(multiply);
+        assertEquals(ad.Result.getSigned(),1);
+	}
+	@Test
+	void Memory_test_And_increment_test()
+	{
+		 MainMemory MM= new MainMemory();
+		 String str[]= new String[] {"01101010101010101010010101010101","00101010101010101010010101010101"};
+		 MM.load(str);//We are loading the above strings in the Main memory
+		 Word read= new Word();
+		 read.set(0);// We want to read what is written on the memory at 0
+	     Word readed=MM.read(read);
+		 assertEquals("f,t,t,f,t,f,t,f,t,f,t,f,t,f,t,f,t,f,t,f,f,t,f,t,f,t,f,t,f,t,f,t",readed.toString());//Checking if the written and read memory matches
+		 read.set(1);
+		 assertEquals("f,f,t,f,t,f,t,f,t,f,t,f,t,f,t,f,t,f,t,f,f,t,f,t,f,t,f,t,f,t,f,t",MM.read(read).toString());//Checking if the written and read memory matches
 
+		 
+		 
+		 Word Address= new Word();
+		 Address.set(0);
+		 Word value= new Word();
+		 value.set(23);
+		 MM.write(Address,value);//We are Writing 23 at address 0
+		 read.set(0);
+	     readed=MM.read(read);// now we are reading the memory again
+		 assertEquals(value.toString(),readed.toString());	
+		 String str1[]= new String[] {"00101010101000001000000101010101"}; 
+		 
+		 
+		 
+		 
+		 MM.load(str1);//trying to load a new array of sting into the memory
+		 read.set(0);
+	     readed=MM.read(read);
+		 assertEquals("f,f,t,f,t,f,t,f,t,f,t,f,f,f,f,f,t,f,f,f,f,f,f,t,f,t,f,t,f,t,f,t",readed.toString());	 
+		 /**
+		  * Below is the test for the increase method of the word.
+		  */
+		 Word word= new Word();
+		 word.set(-20000);
+		 for(int i=-20000;i<=20000;i=i+1)
+		 {
+			 assertEquals(i,word.getSigned());
 
+			 word.increment();
+		 }
+	}
+	@Test
+	void Test_Computer() throws FileNotFoundException
+	{
+	   File file= new File("testprogram");
+	   Scanner Reader1 = new Scanner(file);
+	   int instructions_count=0;
+	   while(Reader1.hasNextLine()) 
+	      {
+		   Reader1.nextLine();
+		   instructions_count++;
+		   }
+	   
+	   Scanner Reader = new Scanner(file);
+	   String[] instructions= new String[instructions_count];
+	   int i=0;
+	   while (Reader.hasNextLine()) 
+	      {
+	         instructions[i++] = Reader.nextLine();
+	      }
+         Processor pro= new Processor();
+         pro.mm.load(instructions);
+         pro.run();
+	   
 	}
 }

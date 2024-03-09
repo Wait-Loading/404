@@ -165,10 +165,19 @@ public class Word
       */ 
 	 public int getSigned() 
 	 {
+		 Bit copy_array[]= new Bit[32];
+		 for(int i=0;i<32;i++)
+		 {
+			 copy_array[i]= new Bit(false);
+		 }
+		 for(int i=0;i<32;i++)
+		 {
+			 copy_array[i].set(array[i].getValue());
+		 }
 		    int output = 0;
 		    for (int i = 0; i < 32; i++) 
 		    {
-		        if (array[i].getValue()) 
+		        if (copy_array[i].getValue()) 
 		        {
 		            int p = 1;
 		            for (int j = 0; j < 31 - i; j++)
@@ -178,28 +187,28 @@ public class Word
 		            output = output + p;
 		        }
 		    }
-		    if (array[0].getValue())
+		    if (copy_array[0].getValue())
 		    {
 		        for (int i = 0; i < 32; i++) 
 		        {
-		            array[i].set(!array[i].getValue());
+		        	copy_array[i].set(!copy_array[i].getValue());
 		        }
 		        int stop = 1;
 		        for (int i = 31; i >= 0 && stop > 0; i--) {
-		            if (array[i].getValue()) 
+		            if (copy_array[i].getValue()) 
 		            {
-		                array[i].set(false);
+		            	copy_array[i].set(false);
 		            } 
 		            else 
 		            {
-		                array[i].set(true);
+		            	copy_array[i].set(true);
 		                stop = 0;
 		            }
 		        }
 		        output = 0;
 		        for (int i = 0; i < 32; i++) 
 		        {
-		            if (array[i].getValue())
+		            if (copy_array[i].getValue())
 		            {
 		                int p = 1;
 		                for (int j = 0; j < 31 - i; j++)
@@ -213,7 +222,6 @@ public class Word
 		    }
 		    return output;
 		}
-
 	 /**
 	  * copies the values of the bits from another Word into this one
 	  * @param other The another Word we need to copy
@@ -230,8 +238,7 @@ public class Word
 	  * @param value The int value converted to bit 
 	  */
 	 public void set(int value) 
-	 {
-		    
+	 {   
 		    if (value < 0)
 		    {
 		        value = -value; // Make the value positive for now
@@ -275,5 +282,20 @@ public class Word
 	public Bit[] getBits() {
 		// TODO Auto-generated method stub
 		return array;
+	}
+	/**
+	 * The increment methode to add 1 to the word
+	 */
+	public void increment() 
+	{
+		 Bit bit_1 = new Bit(true);//The one bit that we want to add
+		 int i = 31;
+		 while (i >=0 && bit_1.getValue())//We loop till we get a false as a carry 
+		 {
+		        Bit bit2 = array[i];
+		        array[i] = bit2.Xor(bit_1);
+		        bit_1 = bit2.and(bit_1);
+		        i--;
+		  }    
 	}
 }

@@ -82,7 +82,6 @@ Bit Xor(Bit other)
 		return other;
 	else
 	{
-		
 		return other.not(); 
 	}
 }
