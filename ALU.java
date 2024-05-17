@@ -4,6 +4,7 @@ public class ALU
 	Word op1;//The 32bits Word on which we want to do a operation
 	Word op2;//An another 32bits Word on which we want to do a operation
 	Word Result;//The result of the operation we want to store in here
+	int num;
 	/**
 	 * The constructor for ALU 
 	 * @param op1 : Input to Set the op1 of the ALU
@@ -14,7 +15,7 @@ public class ALU
 		this.op1=op1;
 		this.op2=op2;
 		Result= new Word();
-
+		num=2;
 	}
 	/**
 	 * The method that need to be called to set the operation of the ALU 
@@ -32,6 +33,7 @@ public class ALU
 	 */
 public void doOperation(Bit [] operation)
 {
+	num=2;
 	if (!operation[3].getValue())//if the last bit of operation is 0 then we want to only go for and, left shift,Xor,add
 	{
 		if (!operation[2].getValue())//here we only want to look at and , left operation
@@ -104,6 +106,8 @@ public void doOperation(Bit [] operation)
 			}
 			else if(operation[1].getValue()&&!operation[0].getValue())
 			{
+				num=10;
+
 				//multiply
 				Result.copy( multiply(op1,op2));
 			}
@@ -132,6 +136,7 @@ private Bit[] add2_bits(Bit bit1, Bit bit2, Bit carryIn)
  */
 private Word add2(Word op1, Word op2)
 {
+
 	Word result= new Word();
 	Bit carry = new Bit(false);//setting the default carry to false
     for (int i =31 ; i >=0; i--) 

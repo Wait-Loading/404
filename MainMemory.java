@@ -2,18 +2,29 @@
 public class MainMemory 
 {
 	static Word[] words= new Word[1024];//a static array of 1024 words
+	MainMemory()
+	{
+		for(int i=0;i<1024;i++)
+		{
+		words[i]= new Word();
+		}
+	}
 	/**
 	 * We read the word at the address and return it
 	 * @param address
 	 * @return Word at the address
 	 */
 	public static Word read(Word address)
+	{if((int)address.getUnsigned()<1024)
 	{
 		if(words[(int)address.getUnsigned()]==null)
 		{
 			words[(int)address.getUnsigned()]=new Word();
 		}
 		return words[(int)address.getUnsigned()];
+	}
+	else
+		return null;
 	}
 	/**
 	 * We write the value at the given address

@@ -298,4 +298,19 @@ public class Word
 		        i--;
 		  }    
 	}
+	/**
+	 * The Decrement method to subtract 1 to the word
+	 */
+	public void decrement() {
+	    Bit bit_1 = new Bit(true); // The one bit that we want to subtract
+	    int i = 31;
+	    while (i >= 0 && bit_1.getValue()) // We loop till we get a false as a borrow
+	    { 
+	        Bit bit2 = array[i];
+	        array[i] = bit2.Xor(bit_1);
+	        bit_1 = bit2.not().and(bit_1);
+	        i--;
+	    }
+	}
+
 }
